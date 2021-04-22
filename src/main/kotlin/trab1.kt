@@ -37,9 +37,6 @@ fun drawRoundSquare(r: RoundSquare, c: Canvas) {
     c.drawCircle((r.center.x), r.center.y, r.factorSide(), BLACK)
 }
 
-fun RoundSquare.presentText(c: Canvas) {
-    c.drawText(CENTERX, GRIDWIDTH, "$this", BLACK, 20)
-}
 
 fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
     return when (key) {
@@ -62,18 +59,34 @@ fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
     }
 }
 
+fun presentText(r: RoundSquare, c: Canvas) {
+    c.drawText(15,
+        GRIDHEIGHT - 10,
+        "Center = (${r.center.x},${r.center.y})  Side = ${r.side}  round = ${(r.round * 100).toInt()}%  color = 0x${WHITE.toString(16)}", BLACK, 15)}
+
 fun main() {
     onStart {
         val cv = Canvas(GRIDWIDTH, GRIDHEIGHT, WHITE)
-        var rs = RoundSquare(Position(GRIDWIDTH / 2, GRIDHEIGHT / 2), DEFAULTSIDE, DEFAULTROUND, GREEN)
+        var rs = RoundSquare(Position(CENTERX, CENTERY), DEFAULTSIDE, DEFAULTROUND, GREEN)
         drawRoundSquare(rs, cv)
-       /* rs.presentText(cv)
+
+        presentText(rs , cv)
+
+
+      /*  cv.drawText(
+            15,
+            GRIDHEIGHT - 10,
+            "Center = (${rs.center.x},${rs.center.y})  Side = ${rs.side}  round = ${(rs.round * 100).toInt()}%  color = 0x${WHITE.toString(16)}",
+            BLACK,
+            15
+        )*/
+
         cv.onKeyPressed {
             rs = keyReceiver(rs, it.char)
         }
         cv.onMouseDown {
             rs = RoundSquare(Position(it.x, it.y), rs.side, rs.round, rs.color)
-        }*/
+        }
     }
     onFinish { println("Hasta la vista Baby!") }
 }
