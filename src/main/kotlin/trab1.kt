@@ -39,6 +39,21 @@ fun drawRoundSquare(r: RoundSquare, c: Canvas) {
 }
 
 
+
+fun presentText(r: RoundSquare, c: Canvas) {
+    c.drawText(
+        15,
+        GRIDHEIGHT - 10,
+        "Center = (${r.center.x},${r.center.y})  " +
+                "Side = ${r.side}  " +
+                "round = ${(r.round * 100).toInt()}%  " +
+                "color = 0x${GREEN.toString(16)}",
+        BLACK,
+        15)
+}
+
+
+
 fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
     return when (key) {
         'S' -> RoundSquare(rs.center, if (rs.side <= SIDE.last) rs.side + SIDEADDER else rs.side, rs.round, rs.color)
@@ -60,9 +75,7 @@ fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
     }
 }
 
-fun presentText(r: RoundSquare, c: Canvas) {
-    c.drawText(15, GRIDHEIGHT - 10, "Center = (${r.center.x},${r.center.y})  Side = ${r.side}  round = ${(r.round * 100).toInt()}%  color = 0x${WHITE.toString(16)}", BLACK, 15)}
-//pedlefth
+
 
 fun main() {
     onStart {
@@ -70,6 +83,8 @@ fun main() {
         var rs = RoundSquare(Position(CENTERX, CENTERY), DEFAULTSIDE, DEFAULTROUND, GREEN)
         drawRoundSquare(rs, cv)
         presentText(rs , cv)
+
+
         cv.onKeyPressed {
             rs = keyReceiver(rs, it.char)
         }
