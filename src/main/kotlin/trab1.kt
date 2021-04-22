@@ -28,13 +28,14 @@ fun RoundSquare.factorSide() = ((this.side) / 2 * this.round).toInt()
 //f = (Side/2)*round = 100*50% ->1º e 50 pixel
 fun drawRoundSquare(r: RoundSquare, c: Canvas) {
     //drawcircules(r, c)
-    c.drawRect((r.center.x - 2 * r.factorSide()), (r.center.y - r.factorSide()), r.side, (r.side - 2 * r.factorSide()), RED)
-    c.drawRect((r.center.x - r.factorSide()), (r.center.y - 2 * r.factorSide()), (r.side - 2 * r.factorSide()), (r.side), CYAN)
-    c.drawCircle((r.center.x - r.factorSide()), (r.center.y - r.factorSide()), r.factorSide(), GREEN)
-    c.drawCircle((r.center.x + r.factorSide()), (r.center.y - r.factorSide()), r.factorSide(), GREEN)
-    c.drawCircle((r.center.x - r.factorSide()), (r.center.y + r.factorSide()), r.factorSide(), GREEN)
-    c.drawCircle((r.center.x + r.factorSide()), (r.center.y + r.factorSide()), r.factorSide(), GREEN)
-    c.drawCircle((r.center.x), r.center.y, r.factorSide(), BLACK)
+    val f = r.factorSide()
+    c.drawRect((r.center.x - 2 * f), (r.center.y - f), r.side, (r.side - 2 * f), RED)
+    c.drawRect((r.center.x - f), (r.center.y - 2 * f), (r.side - 2 * f), (r.side), CYAN)
+    c.drawCircle((r.center.x - f), (r.center.y - f), f, GREEN)
+    c.drawCircle((r.center.x + f), (r.center.y - f), f, GREEN)
+    c.drawCircle((r.center.x - f), (r.center.y + f), f, GREEN)
+    c.drawCircle((r.center.x + f), (r.center.y + f), f, GREEN)
+    c.drawCircle((r.center.x), r.center.y, f, BLACK)
 }
 
 
@@ -60,27 +61,15 @@ fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
 }
 
 fun presentText(r: RoundSquare, c: Canvas) {
-    c.drawText(15,
-        GRIDHEIGHT - 10,
-        "Center = (${r.center.x},${r.center.y})  Side = ${r.side}  round = ${(r.round * 100).toInt()}%  color = 0x${WHITE.toString(16)}", BLACK, 15)}
+    c.drawText(15, GRIDHEIGHT - 10, "Center = (${r.center.x},${r.center.y})  Side = ${r.side}  round = ${(r.round * 100).toInt()}%  color = 0x${WHITE.toString(16)}", BLACK, 15)}
+//pedlefth
 
 fun main() {
     onStart {
         val cv = Canvas(GRIDWIDTH, GRIDHEIGHT, WHITE)
         var rs = RoundSquare(Position(CENTERX, CENTERY), DEFAULTSIDE, DEFAULTROUND, GREEN)
         drawRoundSquare(rs, cv)
-
         presentText(rs , cv)
-
-
-      /*  cv.drawText(
-            15,
-            GRIDHEIGHT - 10,
-            "Center = (${rs.center.x},${rs.center.y})  Side = ${rs.side}  round = ${(rs.round * 100).toInt()}%  color = 0x${WHITE.toString(16)}",
-            BLACK,
-            15
-        )*/
-
         cv.onKeyPressed {
             rs = keyReceiver(rs, it.char)
         }
