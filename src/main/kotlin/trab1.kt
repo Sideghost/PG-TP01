@@ -29,13 +29,13 @@ fun RoundSquare.factorSide() = ((this.side) / 2 * this.round).toInt()
 fun drawRoundSquare(r: RoundSquare, c: Canvas) {
     //drawcircules(r, c)
     val f = r.factorSide()
-    c.drawRect((r.center.x - 2 * f), (r.center.y - f), r.side, (r.side - 2 * f), RED)
-    c.drawRect((r.center.x - f), (r.center.y - 2 * f), (r.side - 2 * f), (r.side), CYAN)
-    c.drawCircle((r.center.x - f), (r.center.y - f), f, GREEN)
-    c.drawCircle((r.center.x + f), (r.center.y - f), f, GREEN)
-    c.drawCircle((r.center.x - f), (r.center.y + f), f, GREEN)
-    c.drawCircle((r.center.x + f), (r.center.y + f), f, GREEN)
-    c.drawCircle((r.center.x), r.center.y, f, BLACK)
+    c.drawRect((r.center.x - 2 * f), (r.center.y - f), r.side, (r.side - 2 * f), r.color)
+    c.drawRect((r.center.x - f), (r.center.y - 2 * f), (r.side - 2 * f), (r.side), r.color)
+    c.drawCircle((r.center.x - f), (r.center.y - f), f, r.color)
+    c.drawCircle((r.center.x + f), (r.center.y - f), f, r.color)
+    c.drawCircle((r.center.x - f), (r.center.y + f), f, r.color)
+    c.drawCircle((r.center.x + f), (r.center.y + f), f, r.color)
+
 }
 
 
@@ -54,7 +54,7 @@ fun presentText(r: RoundSquare, c: Canvas) {
 
 
 
-fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
+/*fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
     return when (key) {
         'S' -> RoundSquare(rs.center, if (rs.side <= SIDE.last) rs.side + SIDEADDER else rs.side, rs.round, rs.color)
         's' -> RoundSquare(rs.center, if (rs.side >= SIDE.first) rs.side - SIDEADDER else rs.side, rs.round, rs.color)
@@ -73,7 +73,7 @@ fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
         'c' -> RoundSquare(rs.center, rs.side, rs.round, (0x000000..0xffffff).random())
         else -> RoundSquare(rs.center, rs.side, rs.round, rs.color)
     }
-}
+}*/
 
 
 
@@ -81,16 +81,34 @@ fun main() {
     onStart {
         val cv = Canvas(GRIDWIDTH, GRIDHEIGHT, WHITE)
         var rs = RoundSquare(Position(CENTERX, CENTERY), DEFAULTSIDE, DEFAULTROUND, GREEN)
-        drawRoundSquare(rs, cv)
+        cv.onTimeProgress(20){
+        cv.onKeyPressed { ke :KeyEvent ->
+
+            when (ke.char){
+            'S' -> rs = RoundSquare(rs.center, if (rs.side <= SIDE.last) rs.side + SIDEADDER else rs.side, rs.round, rs.color)
+                's' -> rs = RoundSquare(rs.center, if (rs.side >= SIDE.first) rs.side - SIDEADDER else rs.side, rs.round, rs.color)
+                'R' -> RoundSquare(rs.center, rs.side, if (rs.round <= ROUND.last) rs.round + ROUNDADDER else rs.round, rs.color)
+                'r' -> RoundSquare(rs.center, rs.side, if (rs.round >= ROUND.first) rs.round - ROUNDADDER else rs.round, rs.color)
+                'c' -> RoundSquare(rs.center, rs.side, rs.round, (0x000000..0xffffff).random())
+                else -> RoundSquare(rs.center, rs.side, rs.round, rs.color)
+            }
+        }
+
+
+
+
+
+
+
+        erase(cv)
         presentText(rs , cv)
-
-
-        cv.onKeyPressed {
+        drawRoundSquare(rs, cv)}
+      /*  cv.onKeyPressed {
             rs = keyReceiver(rs, it.char)
         }
         cv.onMouseDown {
             rs = RoundSquare(Position(it.x, it.y), rs.side, rs.round, rs.color)
-        }
+        }*/
     }
     onFinish { println("Hasta la vista Baby!") }
 }
