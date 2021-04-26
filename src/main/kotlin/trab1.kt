@@ -13,106 +13,68 @@ const val SIDEADDER = 1
 
 data class Position(val x: Int, val y: Int)
 data class RoundSquare(val center: Position, val side: Int = 200, val round: Float, val color: Int)
-//data class Balls(val cx: Int, val cy: Int, val radius: Int, val color: Int)
+data class Balls(val cx: Int, val cy: Int, val radius: Int, val color: Int)
 
 fun RoundSquare.factorSide() = ((this.side) / 2 * this.round).toInt()
 
-//fun drawcircules(r: RoundSquare, c: Canvas): Balls {
-//    c.drawCircle((r.factorSide() + CENTERX), (r.factorSide() + CENTERY), r.factorSide(), r.color)
-//    c.drawCircle((r.side - r.factorSide() + CENTERX), (r.factorSide() + CENTERY), r.factorSide(), r.color)
-//    c.drawCircle((r.factorSide() + CENTERX), (r.side - r.factorSide() + CENTERY), r.factorSide(), r.color)
-//    c.drawCircle((r.side - r.factorSide() + CENTERX), (r.side - r.factorSide() + CENTERY), r.factorSide(), r.color)
-//    return Balls(CENTERX, CENTERY, (r.side / 2 * r.round).toInt(), r.color)
-//}
 
-//f = (Side/2)*round = 100*50% ->1º e 50 pixel
-fun drawRoundSquare(r: RoundSquare, c: Canvas) {
-    //drawcircules(r, c)
+fun drawcircules(r: RoundSquare, c: Canvas): Balls {
     val f = r.factorSide()
-    c.drawRect((r.center.x - 2 * f), (r.center.y - f), r.side, (r.side - 2 * f), r.color)
-    c.drawRect((r.center.x - f), (r.center.y - 2 * f), (r.side - 2 * f), (r.side), r.color)
     c.drawCircle((r.center.x - f), (r.center.y - f), f, r.color)
     c.drawCircle((r.center.x + f), (r.center.y - f), f, r.color)
     c.drawCircle((r.center.x - f), (r.center.y + f), f, r.color)
     c.drawCircle((r.center.x + f), (r.center.y + f), f, r.color)
-
+    return Balls(CENTERX, CENTERY, (r.side / 2 * r.round).toInt(), r.color)
 }
 
 
+fun drawRoundSquare(r: RoundSquare, c: Canvas) {
+    drawcircules(r, c)
+    val f = r.factorSide()
+    c.drawRect((r.center.x - 2 * f), (r.center.y - f), r.side, (r.side - 2 * f), r.color)
+    c.drawRect((r.center.x - f), (r.center.y - 2 * f), (r.side - 2 * f), (r.side), r.color)
+
+}
 
 fun presentText(r: RoundSquare, c: Canvas) {
-    c.drawText(15, GRIDHEIGHT - 10, "Center = (${r.center.x},${r.center.y}) Side = ${r.side} round = ${(r.round * 100).toInt()}% color = 0x${adderColorString(r)}",
-        BLACK, 15)
+    val color = "0x${r.color.toString(16).padStart(6, '0').toUpperCase()}"
+    val round = "${(r.round * 100).toInt()}%"
+    val center = "(${r.center.x},${r.center.y})"
+    val side = "${r.side}"
+    c.drawText(15, GRIDHEIGHT - 10, "Center = $center Side = $side round = $round  color = $color}", BLACK, 15)
 }
 
-fun adderColorString (r: RoundSquare) :String {
-    val str =r.color.toString(16)
-    return when (str.length/*size da string*/) {
-        1 -> "00000$str"
-        2 -> "0000$str"
-        3 -> "000$str"
-        4 -> "00$str"
-        5 -> "0$str"
-        else -> str
+
+fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
+    return when (key) {
+        'S' -> RoundSquare(rs.center, if (rs.side < 400) rs.side + SIDEADDER else rs.side, rs.round, rs.color)
+        's' -> RoundSquare(rs.center, if (rs.side > 10) rs.side - SIDEADDER else rs.side, rs.round, rs.color)
+        'c' -> RoundSquare(rs.center, rs.side, rs.round, (0x000000..0xFFFFFF).random())
+        //'R' ->RoundSquare(rs.center, rs.side, rs.round - 1F, rs.color)
+        //'r' ->RoundSquare(rs.center, rs.side, rs.round + 1F, rs.color)
+        else -> RoundSquare(rs.center, rs.side, rs.round, rs.color)
     }
 }
-
-/*fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
-    return when (key) {
-}*/
-
 
 
 fun main() {
     onStart {
         val cv = Canvas(GRIDWIDTH, GRIDHEIGHT, WHITE)
         var rs = RoundSquare(Position(CENTERX, CENTERY), DEFAULTSIDE, DEFAULTROUND, GREEN)
-        cv.onTimeProgress(20){
+        cv.onTimeProgress(20) {
 
             erase(cv)
-
             drawRoundSquare(rs, cv)
-
-             presentText(rs , cv)
+            presentText(rs, cv)
         }
 
-        cv.onKeyPressed { ke :KeyEvent ->
-            if (ke.char == 'S' && rs.side < 300) {
-                rs = RoundSquare(rs.center, rs.side + 1, rs.round, rs.color)
-            }
-            if (ke.char == 's' && rs.side > 10) {
-                rs = RoundSquare(rs.center, rs.side -1 , rs.round, rs.color)
-            }
-            if (ke.char == 'c'){
-                rs = RoundSquare(rs.center, rs.side, rs.round, (0x000000..0xFFFFFF).random())
-            }
-            /*if (ke.char == 'r'){
-                rs = RoundSquare(rs.center, rs.side, rs.round + 1, rs.color)
-            }
-            if (ke.char == 'R'){
-                rs = RoundSquare(rs.center, rs.side, rs.round - 1, rs.color)
-            }*/
-        }
-        cv.onMouseDown { me :MouseEvent ->
-            rs = RoundSquare(Position(me.x,me.y), rs.side, rs.round, rs.color)
-        }
-
-
-
-
-
-
-
-
-
-      /*  cv.onKeyPressed {
+        cv.onKeyPressed {
             rs = keyReceiver(rs, it.char)
         }
-        cv.onMouseDown {
-            rs = RoundSquare(Position(it.x, it.y), rs.side, rs.round, rs.color)
-        }*/
+        cv.onMouseDown { me: MouseEvent ->
+            rs = RoundSquare(Position(me.x, me.y), rs.side, rs.round, rs.color)
+        }
+
+        onFinish { println("Hasta la vista Baby!") }
     }
-    onFinish { println("Hasta la vista Baby!") }
 }
-
-
