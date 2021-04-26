@@ -41,18 +41,21 @@ fun drawRoundSquare(r: RoundSquare, c: Canvas) {
 
 
 fun presentText(r: RoundSquare, c: Canvas) {
-    c.drawText(
-        15,
-        GRIDHEIGHT - 10,
-        "Center = (${r.center.x},${r.center.y})  " +
-                "Side = ${r.side}  " +
-                "round = ${(r.round * 100).toInt()}%  " +
-                "color = 0x${GREEN.toString(16)}",
-        BLACK,
-        15)
+    c.drawText(15, GRIDHEIGHT - 10, "Center = (${r.center.x},${r.center.y}) Side = ${r.side} round = ${(r.round * 100).toInt()}% color = 0x${adderColorString(r)}",
+        BLACK, 15)
 }
 
-
+fun adderColorString (r: RoundSquare) :String {
+    val str =r.color.toString(16)
+    return when (str.length/*size da string*/) {
+        1 -> "00000$str"
+        2 -> "0000$str"
+        3 -> "000$str"
+        4 -> "00$str"
+        5 -> "0$str"
+        else -> str
+    }
+}
 
 /*fun keyReceiver(rs: RoundSquare, key: Char): RoundSquare {
     return when (key) {
@@ -74,9 +77,6 @@ fun presentText(r: RoundSquare, c: Canvas) {
         else -> RoundSquare(rs.center, rs.side, rs.round, rs.color)
     }
 }*/
-
-
-
 fun main() {
     onStart {
         val cv = Canvas(GRIDWIDTH, GRIDHEIGHT, WHITE)
@@ -93,13 +93,6 @@ fun main() {
                 else -> RoundSquare(rs.center, rs.side, rs.round, rs.color)
             }
         }
-
-
-
-
-
-
-
         erase(cv)
         presentText(rs , cv)
         drawRoundSquare(rs, cv)}
