@@ -1,45 +1,28 @@
 import pt.isel.canvas.*
 
 
-/**
- * Constant that represents the initial Side of the RoundSquare
- */
-const val DEFAULT_SIDE = 200
+const val DEFAULT_SIDE = 200 //The initial Side of the RoundSquare
 
-/**
- * Constant that defines the initial percentage of how much round is the RoundSquare
- */
-const val DEFAULT_ROUND = 0.5F
 
-/**
- * Constant that defines the width of the canvas
- */
-const val GRID_WIDTH = 600
+const val DEFAULT_ROUND = 50 //The initial percentage of how much round is the RoundSquare
 
-/**
- * Constant that defines the height of the canvas
- */
-const val GRID_HEIGHT = 400
 
-/**
- * Constant that defines the center in the X assis
- */
-const val CENTER_X = GRID_WIDTH / 2
+const val GRID_WIDTH = 600 //The width of the canvas
 
-/**
- * Constant that defines the center in the Y assis
- */
-const val CENTER_Y = GRID_HEIGHT / 2
 
-/**
- * Constant that defines the increment of roundness
- */
-const val ROUND_ADDER = 0.01F
+const val GRID_HEIGHT = 400 //The height of the canvas
 
-/**
- * Constant that defines the increment to the Side
- */
-const val SIDE_ADDER = 1
+
+const val CENTER_X = GRID_WIDTH / 2 //The center in the X assis
+
+
+const val CENTER_Y = GRID_HEIGHT / 2 //The center in the Y assis
+
+
+const val ROUND_ADDER = 1 //The increment of roundness
+
+
+const val SIDE_ADDER = 1 //That defines the increment to the Side
 
 
 /**
@@ -55,13 +38,13 @@ data class Position(val x: Int, val y: Int)
  * @property side size of the RoundSquare
  * @property round roundness of the RoundSquare
  */
-data class RoundSquare(val center: Position, val side: Int = 200, val round: Float, val color: Int)
+data class RoundSquare(val center: Position, val side: Int = 200, val round: Int, val color: Int)
 
 
 /**
  * Function that calculates the relation between the radius of a circle and the side of the RoundSquare
  */
-fun RoundSquare.factorSide() = ((this.side) / 2 * this.round).toInt()
+fun RoundSquare.factorSide() = ((this.side) / 2 * (this.round.toFloat() / 100)).toInt()
 
 
 
@@ -88,7 +71,7 @@ fun drawRoundSquare(r: RoundSquare, c: Canvas) {
  */
 fun presentText(r: RoundSquare, c: Canvas) {
     val color = "0x${r.color.toString(16).padStart(6, '0').toUpperCase()}"
-    val round = "${(r.round * 100).toInt()}%"
+    val round = "${r.round}%"
     val center = "(${r.center.x},${r.center.y})"
     val side = "${r.side}"
     c.drawText(15, GRID_HEIGHT - 10, "Center = $center Side = $side round = $round  color = $color", BLACK, 15)
@@ -105,8 +88,8 @@ fun keyReceiver(r: RoundSquare, key: Char): RoundSquare {
         'S' ->  RoundSquare(r.center, if (r.side < 400) r.side + SIDE_ADDER else r.side, r.round, r.color)              // increases the size
         's' ->  RoundSquare(r.center, if (r.side > 10) r.side - SIDE_ADDER else r.side, r.round, r.color)               // decreases the size
         'c' ->  RoundSquare(r.center, r.side, r.round, (0x000000..0xFFFFFF).random())                                   // changes the color
-        'r' ->  RoundSquare(r.center, r.side, if (r.round > 0) r.round - ROUND_ADDER else r.round, r.color)             // decreases the round factor
-        'R' ->  RoundSquare(r.center, r.side, if (r.round < 1) r.round + ROUND_ADDER else r.round, r.color)             // increases the round factor
+        'r' ->  RoundSquare(r.center, r.side, if (r.round > 0) (r.round - ROUND_ADDER) else r.round, r.color)             // decreases the round factor
+        'R' ->  RoundSquare(r.center, r.side, if (r.round < 100) (r.round + ROUND_ADDER) else r.round, r.color)             // increases the round factor
         else -> RoundSquare(r.center, r.side, r.round, r.color)
     }
 }
